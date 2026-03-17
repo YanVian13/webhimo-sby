@@ -1,0 +1,2234 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HIMO — Himpunan Musyawarah OSIS Kota Surabaya</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,900;1,400;1,600&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    /* ============================================================
+       CSS VARIABLES & RESET
+    ============================================================ */
+    :root {
+      --navy:       #0A1628;
+      --navy-mid:   #112240;
+      --navy-light: #1A3460;
+      --gold:       #C9A84C;
+      --gold-light: #E4C87A;
+      --gold-pale:  #F5EDD6;
+      --cream:      #F5F0E8;
+      --cream-dark: #EDE6D6;
+      --white:      #FFFFFF;
+      --text-dark:  #0A1628;
+      --text-body:  #2C3E50;
+      --text-muted: #6B7A8D;
+      --border:     rgba(201,168,76,0.25);
+      --shadow-sm:  0 2px 12px rgba(10,22,40,0.08);
+      --shadow-md:  0 8px 32px rgba(10,22,40,0.14);
+      --shadow-lg:  0 20px 60px rgba(10,22,40,0.22);
+      --radius-sm:  6px;
+      --radius-md:  12px;
+      --radius-lg:  20px;
+      --transition: 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; font-size: 16px; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--cream);
+      color: var(--text-body);
+      overflow-x: hidden;
+      cursor: default;
+    }
+
+    /* Custom scrollbar */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--navy); }
+    ::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 3px; }
+
+    /* Selection */
+    ::selection { background: var(--gold); color: var(--navy); }
+
+    /* ============================================================
+       UTILITY
+    ============================================================ */
+    .container { max-width: 1180px; margin: 0 auto; padding: 0 32px; }
+    .section-tag {
+      display: inline-flex; align-items: center; gap: 10px;
+      font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 0.2em;
+      text-transform: uppercase; color: var(--gold); margin-bottom: 16px;
+    }
+    .section-tag::before {
+      content: ''; display: block; width: 28px; height: 1px; background: var(--gold);
+    }
+    .section-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 700; line-height: 1.15;
+      color: var(--navy);
+    }
+    .section-title.light { color: var(--cream); }
+    .divider-gold {
+      display: block; width: 48px; height: 3px;
+      background: linear-gradient(90deg, var(--gold), var(--gold-light));
+      border-radius: 2px; margin: 20px 0 28px;
+    }
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: 10px;
+      padding: 14px 32px; background: var(--gold);
+      color: var(--navy); font-family: 'DM Sans', sans-serif;
+      font-weight: 600; font-size: 14px; letter-spacing: 0.04em;
+      border: none; border-radius: var(--radius-sm);
+      cursor: pointer; text-decoration: none;
+      transition: var(--transition); position: relative; overflow: hidden;
+    }
+    .btn-primary::after {
+      content: ''; position: absolute; inset: 0;
+      background: rgba(255,255,255,0.15); opacity: 0;
+      transition: var(--transition);
+    }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(201,168,76,0.4); }
+    .btn-primary:hover::after { opacity: 1; }
+    .btn-outline {
+      display: inline-flex; align-items: center; gap: 10px;
+      padding: 13px 30px; background: transparent;
+      color: var(--gold); font-family: 'DM Sans', sans-serif;
+      font-weight: 600; font-size: 14px; letter-spacing: 0.04em;
+      border: 1.5px solid var(--gold); border-radius: var(--radius-sm);
+      cursor: pointer; text-decoration: none; transition: var(--transition);
+    }
+    .btn-outline:hover { background: var(--gold); color: var(--navy); transform: translateY(-2px); }
+
+    /* Scroll reveal */
+    .reveal { opacity: 0; transform: translateY(36px); transition: opacity 0.7s ease, transform 0.7s ease; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+    .reveal-left { opacity: 0; transform: translateX(-40px); transition: opacity 0.7s ease, transform 0.7s ease; }
+    .reveal-left.visible { opacity: 1; transform: translateX(0); }
+    .reveal-right { opacity: 0; transform: translateX(40px); transition: opacity 0.7s ease, transform 0.7s ease; }
+    .reveal-right.visible { opacity: 1; transform: translateX(0); }
+
+    /* ============================================================
+       NAVBAR
+    ============================================================ */
+    #navbar {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+      padding: 22px 0;
+      transition: background 0.4s ease, padding 0.4s ease, box-shadow 0.4s ease;
+    }
+    #navbar.scrolled {
+      background: rgba(10,22,40,0.97);
+      backdrop-filter: blur(12px);
+      padding: 14px 0;
+      box-shadow: 0 4px 30px rgba(10,22,40,0.4);
+    }
+    .nav-inner {
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .nav-logo {
+      display: flex; align-items: center; gap: 14px; text-decoration: none;
+    }
+    .nav-logo-mark {
+      width: 42px; height: 42px;
+      background: linear-gradient(135deg, var(--gold), var(--gold-light));
+      border-radius: 8px; display: flex; align-items: center; justify-content: center;
+      font-family: 'Playfair Display', serif; font-weight: 900;
+      font-size: 18px; color: var(--navy); letter-spacing: -0.5px;
+      box-shadow: 0 4px 14px rgba(201,168,76,0.35);
+    }
+    .nav-logo-text { display: flex; flex-direction: column; }
+    .nav-logo-text span:first-child {
+      font-family: 'Playfair Display', serif; font-weight: 700;
+      font-size: 17px; color: var(--white); letter-spacing: 0.02em; line-height: 1;
+    }
+    .nav-logo-text span:last-child {
+      font-size: 10px; color: var(--gold); letter-spacing: 0.14em;
+      text-transform: uppercase; font-weight: 500; margin-top: 2px;
+    }
+    .nav-links {
+      display: flex; align-items: center; gap: 6px; list-style: none;
+    }
+    .nav-links a {
+      color: rgba(245,240,232,0.78); font-size: 13.5px; font-weight: 500;
+      text-decoration: none; padding: 8px 14px; border-radius: var(--radius-sm);
+      transition: var(--transition); letter-spacing: 0.02em;
+    }
+    .nav-links a:hover { color: var(--gold); background: rgba(201,168,76,0.1); }
+    .nav-cta { margin-left: 12px; }
+    .hamburger {
+      display: none; flex-direction: column; gap: 5px;
+      background: none; border: none; cursor: pointer; padding: 6px;
+    }
+    .hamburger span {
+      display: block; width: 24px; height: 2px;
+      background: var(--white); border-radius: 2px; transition: var(--transition);
+    }
+    .mobile-menu {
+      display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+      background: var(--navy); z-index: 999; padding: 100px 32px 40px;
+      flex-direction: column; gap: 8px;
+    }
+    .mobile-menu.open { display: flex; }
+    .mobile-menu a {
+      color: var(--cream); font-size: 22px; font-family: 'Playfair Display', serif;
+      font-weight: 600; text-decoration: none; padding: 14px 0;
+      border-bottom: 1px solid rgba(201,168,76,0.15);
+      transition: var(--transition);
+    }
+    .mobile-menu a:hover { color: var(--gold); padding-left: 12px; }
+    .mobile-close {
+      position: absolute; top: 24px; right: 28px;
+      background: none; border: none; color: var(--cream);
+      font-size: 28px; cursor: pointer;
+    }
+
+    /* ============================================================
+       HERO SECTION
+    ============================================================ */
+    #hero {
+      min-height: 100vh; position: relative;
+      background: var(--navy);
+      display: flex; align-items: center; overflow: hidden;
+    }
+    .hero-bg {
+      position: absolute; inset: 0; overflow: hidden;
+    }
+    /* Ornamental grid lines */
+    .hero-bg::before {
+      content: ''; position: absolute; inset: 0;
+      background-image:
+        linear-gradient(rgba(201,168,76,0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(201,168,76,0.05) 1px, transparent 1px);
+      background-size: 60px 60px;
+    }
+    /* Radial glow */
+    .hero-bg::after {
+      content: ''; position: absolute;
+      top: -20%; right: -10%; width: 800px; height: 800px;
+      background: radial-gradient(circle, rgba(201,168,76,0.12) 0%, transparent 65%);
+    }
+    .hero-ornament {
+      position: absolute; bottom: -60px; left: -60px;
+      width: 400px; height: 400px; opacity: 0.06;
+      border: 1px solid var(--gold); border-radius: 50%;
+    }
+    .hero-ornament-2 {
+      position: absolute; bottom: -100px; left: -100px;
+      width: 560px; height: 560px; opacity: 0.04;
+      border: 1px solid var(--gold); border-radius: 50%;
+    }
+    .hero-ornament-3 {
+      position: absolute; top: 10%; right: 5%;
+      width: 200px; height: 200px; opacity: 0.07;
+      border: 1px solid var(--gold);
+      transform: rotate(45deg);
+    }
+    .hero-content {
+      position: relative; z-index: 2;
+      padding: 140px 0 100px;
+      max-width: 780px;
+    }
+    .hero-eyebrow {
+      display: flex; align-items: center; gap: 14px;
+      margin-bottom: 28px; animation: fadeInUp 0.8s ease 0.2s both;
+    }
+    .hero-eyebrow-line {
+      width: 40px; height: 1px; background: var(--gold);
+    }
+    .hero-eyebrow span {
+      font-family: 'DM Mono', monospace; font-size: 11px;
+      letter-spacing: 0.22em; text-transform: uppercase; color: var(--gold);
+    }
+    .hero-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(3rem, 6vw, 5.2rem);
+      font-weight: 900; line-height: 1.08;
+      color: var(--white); margin-bottom: 10px;
+      animation: fadeInUp 0.8s ease 0.35s both;
+    }
+    .hero-title em {
+      font-style: italic; color: var(--gold);
+      display: block;
+    }
+    .hero-subtitle {
+      font-size: clamp(1rem, 2vw, 1.2rem); color: rgba(201,168,76,0.7);
+      font-weight: 400; letter-spacing: 0.08em; text-transform: uppercase;
+      margin-bottom: 28px;
+      animation: fadeInUp 0.8s ease 0.45s both;
+    }
+    .hero-desc {
+      font-size: 17px; color: rgba(245,240,232,0.7); line-height: 1.75;
+      max-width: 560px; margin-bottom: 44px;
+      animation: fadeInUp 0.8s ease 0.55s both;
+    }
+    .hero-actions {
+      display: flex; gap: 16px; flex-wrap: wrap;
+      animation: fadeInUp 0.8s ease 0.65s both;
+    }
+    .hero-stats {
+      display: flex; gap: 48px; margin-top: 72px; padding-top: 40px;
+      border-top: 1px solid rgba(201,168,76,0.2);
+      animation: fadeInUp 0.8s ease 0.75s both;
+    }
+    .hero-stat-num {
+      font-family: 'Playfair Display', serif; font-weight: 700;
+      font-size: 2.4rem; color: var(--gold); line-height: 1;
+    }
+    .hero-stat-label {
+      font-size: 12px; color: rgba(245,240,232,0.55); letter-spacing: 0.1em;
+      text-transform: uppercase; margin-top: 6px;
+    }
+    .hero-scroll {
+      position: absolute; bottom: 40px; left: 50%;
+      transform: translateX(-50%); z-index: 2;
+      display: flex; flex-direction: column; align-items: center; gap: 8px;
+      animation: fadeIn 1s ease 1.2s both;
+    }
+    .hero-scroll span {
+      font-size: 10px; letter-spacing: 0.2em; color: rgba(201,168,76,0.6);
+      text-transform: uppercase;
+    }
+    .scroll-line {
+      width: 1px; height: 50px;
+      background: linear-gradient(to bottom, var(--gold), transparent);
+      animation: scrollPulse 2s ease-in-out infinite;
+    }
+
+    /* ============================================================
+       ABOUT SECTION
+    ============================================================ */
+    #tentang {
+      padding: 120px 0;
+      background: var(--cream);
+      position: relative;
+      overflow: hidden;
+    }
+    #tentang::before {
+      content: 'HIMO';
+      position: absolute; top: -60px; right: -30px;
+      font-family: 'Playfair Display', serif; font-size: 280px;
+      font-weight: 900; color: rgba(10,22,40,0.04);
+      line-height: 1; pointer-events: none; user-select: none;
+    }
+    .tentang-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 80px; align-items: start;
+    }
+    .tentang-left { }
+    .pengertian-card {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      padding: 40px;
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-md);
+      margin-top: 32px;
+      position: relative;
+    }
+    .pengertian-card::before {
+      content: '"';
+      position: absolute; top: -20px; left: 32px;
+      font-family: 'Playfair Display', serif; font-size: 80px;
+      color: var(--gold); line-height: 1;
+    }
+    .pengertian-card p {
+      font-size: 16px; line-height: 1.85; color: var(--text-body);
+      font-style: italic;
+    }
+    .pengertian-card strong {
+      color: var(--navy); font-style: normal;
+    }
+
+    /* Timeline */
+    .tentang-right { }
+    .timeline-label {
+      font-family: 'DM Mono', monospace; font-size: 11px;
+      letter-spacing: 0.18em; text-transform: uppercase;
+      color: var(--gold); margin-bottom: 28px;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .timeline-label::before { content: ''; width: 28px; height: 1px; background: var(--gold); }
+    .timeline { position: relative; padding-left: 32px; }
+    .timeline::before {
+      content: ''; position: absolute; left: 0; top: 8px; bottom: 8px;
+      width: 2px; background: linear-gradient(to bottom, var(--gold), var(--gold-pale));
+    }
+    .timeline-item { position: relative; padding-bottom: 36px; cursor: pointer; }
+    .timeline-item:last-child { padding-bottom: 0; }
+    .timeline-dot {
+      position: absolute; left: -38px; top: 6px;
+      width: 14px; height: 14px; border-radius: 50%;
+      background: var(--cream); border: 2.5px solid var(--gold);
+      transition: var(--transition);
+    }
+    .timeline-item:hover .timeline-dot,
+    .timeline-item.active .timeline-dot {
+      background: var(--gold); transform: scale(1.3);
+    }
+    .timeline-year {
+      font-family: 'DM Mono', monospace; font-size: 12px;
+      color: var(--gold); font-weight: 500; margin-bottom: 4px;
+    }
+    .timeline-title {
+      font-family: 'Playfair Display', serif; font-size: 17px;
+      font-weight: 600; color: var(--navy); margin-bottom: 6px;
+    }
+    .timeline-desc {
+      font-size: 14px; color: var(--text-muted); line-height: 1.65;
+      max-height: 0; overflow: hidden; transition: max-height 0.5s ease, opacity 0.4s ease;
+      opacity: 0;
+    }
+    .timeline-item.active .timeline-desc,
+    .timeline-item:hover .timeline-desc {
+      max-height: 120px; opacity: 1;
+    }
+
+    /* ============================================================
+       PROGRAM KERJA SECTION
+    ============================================================ */
+    #program {
+      padding: 120px 0;
+      background: var(--navy);
+      position: relative; overflow: hidden;
+    }
+    #program::before {
+      content: ''; position: absolute; inset: 0;
+      background-image:
+        linear-gradient(rgba(201,168,76,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(201,168,76,0.04) 1px, transparent 1px);
+      background-size: 50px 50px;
+    }
+    .program-header { margin-bottom: 64px; }
+    .program-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px;
+    }
+    .program-card {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(201,168,76,0.2);
+      border-radius: var(--radius-lg); padding: 36px 32px;
+      transition: var(--transition); position: relative; overflow: hidden;
+      cursor: default;
+    }
+    .program-card::before {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(135deg, rgba(201,168,76,0.06), transparent);
+      opacity: 0; transition: var(--transition);
+    }
+    .program-card:hover { transform: translateY(-6px); border-color: rgba(201,168,76,0.5); }
+    .program-card:hover::before { opacity: 1; }
+    .program-icon {
+      width: 52px; height: 52px;
+      background: rgba(201,168,76,0.15);
+      border-radius: var(--radius-md);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 24px; margin-bottom: 22px;
+      border: 1px solid rgba(201,168,76,0.25);
+    }
+    .program-card-title {
+      font-family: 'Playfair Display', serif; font-size: 18px;
+      font-weight: 600; color: var(--white); margin-bottom: 10px;
+    }
+    .program-card-desc {
+      font-size: 14px; color: rgba(245,240,232,0.6);
+      line-height: 1.7; margin-bottom: 20px;
+    }
+    .program-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 5px 12px; border-radius: 20px; font-size: 11px;
+      font-family: 'DM Mono', monospace; letter-spacing: 0.08em; font-weight: 500;
+    }
+    .badge-aktif {
+      background: rgba(72,199,142,0.15); color: #48c78e;
+      border: 1px solid rgba(72,199,142,0.3);
+    }
+    .badge-aktif::before {
+      content: '●'; font-size: 8px;
+      animation: blink 1.5s ease-in-out infinite;
+    }
+    .badge-selesai {
+      background: rgba(201,168,76,0.15); color: var(--gold-light);
+      border: 1px solid rgba(201,168,76,0.3);
+    }
+    .badge-upcoming {
+      background: rgba(120,148,200,0.15); color: #7894c8;
+      border: 1px solid rgba(120,148,200,0.3);
+    }
+
+    /* ============================================================
+       DOKUMENTASI SECTION
+    ============================================================ */
+    #dokumentasi {
+      padding: 120px 0;
+      background: var(--cream-dark);
+      position: relative;
+    }
+    .dok-header { margin-bottom: 48px; }
+    .dok-filter {
+      display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 40px;
+    }
+    .dok-btn {
+      padding: 8px 20px; border-radius: 30px;
+      font-size: 13px; font-weight: 500;
+      border: 1.5px solid var(--border); background: transparent;
+      color: var(--text-muted); cursor: pointer; transition: var(--transition);
+    }
+    .dok-btn.active, .dok-btn:hover {
+      background: var(--navy); color: var(--gold);
+      border-color: var(--navy);
+    }
+    .dok-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      grid-auto-rows: 200px;
+      gap: 16px;
+    }
+    .dok-item {
+      border-radius: var(--radius-md); overflow: hidden;
+      position: relative; cursor: pointer;
+      background: var(--navy-mid);
+      transition: var(--transition);
+    }
+    .dok-item:nth-child(1), .dok-item:nth-child(7) {
+      grid-column: span 2; grid-row: span 2;
+    }
+    .dok-item-img {
+      width: 100%; height: 100%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 40px; position: relative;
+      background-size: cover; background-position: center;
+    }
+    .dok-item:hover { transform: scale(1.02); z-index: 2; box-shadow: var(--shadow-lg); }
+    .dok-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(10,22,40,0.9) 0%, transparent 60%);
+      opacity: 0; transition: var(--transition);
+      display: flex; align-items: flex-end; padding: 20px;
+    }
+    .dok-item:hover .dok-overlay { opacity: 1; }
+    .dok-overlay-text { color: var(--white); }
+    .dok-overlay-text p { font-size: 13px; color: rgba(255,255,255,0.7); margin-top: 3px; }
+    .dok-overlay-title { font-family: 'Playfair Display', serif; font-size: 15px; font-weight: 600; }
+
+    /* Lightbox */
+    .lightbox {
+      display: none; position: fixed; inset: 0; z-index: 2000;
+      background: rgba(10,22,40,0.95);
+      align-items: center; justify-content: center;
+      padding: 40px;
+    }
+    .lightbox.open { display: flex; }
+    .lightbox-content { max-width: 900px; width: 100%; text-align: center; }
+    .lightbox-visual {
+      width: 100%; max-height: 65vh;
+      background: var(--navy-mid); border-radius: var(--radius-lg);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 120px; min-height: 300px;
+      border: 1px solid rgba(201,168,76,0.2);
+    }
+    .lightbox-title {
+      font-family: 'Playfair Display', serif; font-size: 22px;
+      color: var(--white); margin-top: 20px;
+    }
+    .lightbox-desc { font-size: 14px; color: rgba(245,240,232,0.6); margin-top: 8px; }
+    .lightbox-close {
+      position: fixed; top: 24px; right: 28px;
+      background: none; border: none; color: var(--white);
+      font-size: 32px; cursor: pointer; transition: var(--transition);
+      line-height: 1;
+    }
+    .lightbox-close:hover { color: var(--gold); transform: rotate(90deg); }
+
+    /* ============================================================
+       STRUKTUR ORGANISASI
+    ============================================================ */
+    #struktur {
+      padding: 120px 0;
+      background: var(--navy);
+      position: relative; overflow: hidden;
+    }
+    #struktur::after {
+      content: ''; position: absolute;
+      bottom: -100px; right: -100px;
+      width: 500px; height: 500px;
+      background: radial-gradient(circle, rgba(201,168,76,0.08) 0%, transparent 70%);
+    }
+    .org-chart { position: relative; z-index: 1; }
+    .org-level { display: flex; justify-content: center; gap: 24px; margin-bottom: 0; }
+    .org-card {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(201,168,76,0.25);
+      border-radius: var(--radius-md); padding: 20px 28px;
+      text-align: center; min-width: 160px; position: relative;
+      transition: var(--transition);
+    }
+    .org-card:hover {
+      background: rgba(201,168,76,0.1); border-color: var(--gold);
+      transform: translateY(-4px);
+    }
+    .org-card.top {
+      background: linear-gradient(135deg, rgba(201,168,76,0.2), rgba(201,168,76,0.08));
+      border-color: var(--gold); min-width: 220px;
+    }
+    .org-avatar {
+      width: 56px; height: 56px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--gold), var(--gold-light));
+      margin: 0 auto 12px; display: flex; align-items: center;
+      justify-content: center; font-size: 22px;
+      box-shadow: 0 4px 16px rgba(201,168,76,0.3);
+    }
+    .org-card.top .org-avatar { width: 68px; height: 68px; font-size: 28px; }
+    .org-role {
+      font-family: 'DM Mono', monospace; font-size: 10px;
+      letter-spacing: 0.15em; text-transform: uppercase;
+      color: var(--gold); margin-bottom: 4px;
+    }
+    .org-name {
+      font-family: 'Playfair Display', serif; font-size: 15px;
+      font-weight: 600; color: var(--white);
+    }
+    .org-connector {
+      display: flex; justify-content: center;
+      padding: 14px 0;
+    }
+    .org-connector-line {
+      width: 2px; height: 32px;
+      background: linear-gradient(to bottom, var(--gold), rgba(201,168,76,0.4));
+    }
+    .org-connector-h {
+      display: flex; align-items: flex-start; justify-content: center;
+      padding-bottom: 14px; position: relative;
+    }
+    .org-h-line {
+      position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+      width: 2px; height: 18px;
+      background: linear-gradient(to bottom, rgba(201,168,76,0.4), var(--gold));
+    }
+    .org-branches {
+      display: flex; gap: 20px; justify-content: center;
+      position: relative;
+    }
+    .org-branches::before {
+      content: ''; position: absolute; top: 0;
+      left: calc(50% - 50% + 80px); right: calc(50% - 50% + 80px);
+      height: 1px; background: rgba(201,168,76,0.4);
+    }
+    .org-branch {
+      display: flex; flex-direction: column; align-items: center; gap: 0;
+    }
+    .org-branch-line {
+      width: 2px; height: 18px;
+      background: linear-gradient(to bottom, var(--gold), rgba(201,168,76,0.5));
+    }
+
+    /* ============================================================
+       ARTIKEL SECTION
+    ============================================================ */
+    #artikel {
+      padding: 120px 0;
+      background: var(--cream); position: relative; overflow: hidden;
+    }
+    #artikel::before {
+      content: ''; position: absolute;
+      top: -100px; left: -100px;
+      width: 500px; height: 500px;
+      background: radial-gradient(circle, rgba(201,168,76,0.06) 0%, transparent 70%);
+    }
+    .artikel-header {
+      display: flex; align-items: flex-end;
+      justify-content: space-between; margin-bottom: 52px; flex-wrap: wrap; gap: 20px;
+    }
+    .artikel-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px;
+    }
+    .artikel-card {
+      background: var(--white); border-radius: var(--radius-lg);
+      overflow: hidden; border: 1px solid rgba(201,168,76,0.15);
+      box-shadow: var(--shadow-sm); transition: var(--transition);
+      cursor: pointer;
+    }
+    .artikel-card:hover { transform: translateY(-6px); box-shadow: var(--shadow-lg); border-color: rgba(201,168,76,0.4); }
+    .artikel-thumb {
+      height: 180px; background: var(--navy-mid);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 52px; position: relative; overflow: hidden;
+    }
+    .artikel-thumb-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(135deg, rgba(10,22,40,0.7), rgba(201,168,76,0.2));
+    }
+    .artikel-category {
+      position: absolute; top: 14px; left: 14px;
+      padding: 4px 12px; background: var(--gold); color: var(--navy);
+      font-size: 10px; font-family: 'DM Mono', monospace; letter-spacing: 0.1em;
+      text-transform: uppercase; font-weight: 600; border-radius: 30px;
+    }
+    .artikel-body { padding: 24px; }
+    .artikel-meta {
+      display: flex; align-items: center; gap: 12px;
+      font-size: 12px; color: var(--text-muted); margin-bottom: 10px;
+    }
+    .artikel-meta span { display: flex; align-items: center; gap: 5px; }
+    .artikel-title {
+      font-family: 'Playfair Display', serif; font-size: 17px;
+      font-weight: 600; color: var(--navy); margin-bottom: 10px;
+      line-height: 1.4;
+    }
+    .artikel-excerpt {
+      font-size: 14px; color: var(--text-muted);
+      line-height: 1.7; margin-bottom: 18px;
+    }
+    .artikel-link {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 13px; font-weight: 600; color: var(--gold);
+      text-decoration: none; letter-spacing: 0.03em; transition: var(--transition);
+    }
+    .artikel-link:hover { gap: 10px; }
+
+    /* Empty state */
+    .artikel-empty {
+      grid-column: 1/-1; text-align: center; padding: 80px 40px;
+      color: var(--text-muted);
+    }
+    .artikel-empty .empty-icon { font-size: 56px; margin-bottom: 16px; }
+    .artikel-empty p { font-size: 15px; }
+
+    /* Article Detail Modal */
+    .article-modal {
+      display: none; position: fixed; inset: 0; z-index: 2000;
+      background: rgba(10,22,40,0.92);
+      align-items: center; justify-content: center;
+      padding: 40px; overflow-y: auto;
+    }
+    .article-modal.open { display: flex; }
+    .article-modal-content {
+      background: var(--white); border-radius: var(--radius-lg);
+      max-width: 760px; width: 100%;
+      max-height: 90vh; overflow-y: auto;
+      position: relative;
+    }
+    .article-modal-hero {
+      height: 200px; background: var(--navy-mid);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 80px; position: relative;
+      border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    }
+    .article-modal-body { padding: 40px; }
+    .article-modal-cat {
+      display: inline-block; padding: 4px 14px; background: var(--gold);
+      color: var(--navy); font-size: 10px; font-family: 'DM Mono', monospace;
+      letter-spacing: 0.12em; text-transform: uppercase; font-weight: 600;
+      border-radius: 30px; margin-bottom: 16px;
+    }
+    .article-modal-title {
+      font-family: 'Playfair Display', serif; font-size: 26px;
+      font-weight: 700; color: var(--navy); margin-bottom: 12px; line-height: 1.3;
+    }
+    .article-modal-meta {
+      display: flex; gap: 16px; font-size: 13px;
+      color: var(--text-muted); margin-bottom: 28px; flex-wrap: wrap;
+    }
+    .article-modal-text {
+      font-size: 15.5px; line-height: 1.85; color: var(--text-body);
+    }
+    .article-modal-text p { margin-bottom: 16px; }
+    .modal-close-btn {
+      position: absolute; top: 16px; right: 16px;
+      width: 36px; height: 36px; border-radius: 50%;
+      background: rgba(10,22,40,0.5); border: none;
+      color: var(--white); font-size: 18px;
+      cursor: pointer; display: flex; align-items: center;
+      justify-content: center; transition: var(--transition); z-index: 10;
+    }
+    .modal-close-btn:hover { background: var(--gold); color: var(--navy); transform: rotate(90deg); }
+
+    /* Submit Article Modal */
+    .submit-modal {
+      display: none; position: fixed; inset: 0; z-index: 2000;
+      background: rgba(10,22,40,0.92);
+      align-items: center; justify-content: center;
+      padding: 40px; overflow-y: auto;
+    }
+    .submit-modal.open { display: flex; }
+    .submit-modal-content {
+      background: var(--white); border-radius: var(--radius-lg);
+      max-width: 640px; width: 100%; padding: 48px;
+      position: relative;
+    }
+    .form-group { margin-bottom: 20px; }
+    .form-label {
+      display: block; font-size: 13px; font-weight: 600;
+      color: var(--navy); margin-bottom: 7px; letter-spacing: 0.02em;
+    }
+    .form-label span { color: var(--gold); }
+    .form-input, .form-select, .form-textarea {
+      width: 100%; padding: 12px 16px;
+      border: 1.5px solid #DDD6C8; border-radius: var(--radius-sm);
+      font-family: 'DM Sans', sans-serif; font-size: 14.5px;
+      color: var(--text-body); background: var(--cream);
+      transition: var(--transition); outline: none;
+    }
+    .form-input:focus, .form-select:focus, .form-textarea:focus {
+      border-color: var(--gold); background: var(--white);
+      box-shadow: 0 0 0 3px rgba(201,168,76,0.15);
+    }
+    .form-textarea { resize: vertical; min-height: 140px; }
+    .form-note {
+      font-size: 12px; color: var(--text-muted); margin-top: 6px; line-height: 1.5;
+    }
+    .success-toast {
+      display: none; position: fixed; bottom: 32px; right: 32px; z-index: 3000;
+      background: var(--navy); color: var(--white);
+      padding: 16px 24px; border-radius: var(--radius-md);
+      border-left: 4px solid var(--gold);
+      box-shadow: var(--shadow-lg); font-size: 14px; font-weight: 500;
+      animation: slideInRight 0.4s ease;
+    }
+    .success-toast.show { display: block; }
+
+    /* ============================================================
+       ADMIN PANEL
+    ============================================================ */
+    .admin-panel {
+      display: none; position: fixed; inset: 0; z-index: 3000;
+      background: rgba(10,22,40,0.95);
+      align-items: center; justify-content: center; padding: 40px;
+    }
+    .admin-panel.open { display: flex; }
+    .admin-content {
+      background: var(--navy-mid); border-radius: var(--radius-lg);
+      max-width: 800px; width: 100%; max-height: 90vh;
+      overflow-y: auto; padding: 48px; position: relative;
+      border: 1px solid rgba(201,168,76,0.3);
+    }
+    .admin-title {
+      font-family: 'Playfair Display', serif; font-size: 24px;
+      color: var(--white); margin-bottom: 8px;
+    }
+    .admin-subtitle { font-size: 13px; color: rgba(245,240,232,0.5); margin-bottom: 36px; }
+    .pending-list { display: flex; flex-direction: column; gap: 16px; }
+    .pending-item {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(201,168,76,0.2);
+      border-radius: var(--radius-md); padding: 20px 24px;
+    }
+    .pending-item-title {
+      font-family: 'Playfair Display', serif; font-size: 16px;
+      color: var(--white); margin-bottom: 4px;
+    }
+    .pending-item-meta { font-size: 12px; color: rgba(245,240,232,0.5); margin-bottom: 10px; }
+    .pending-item-preview { font-size: 13px; color: rgba(245,240,232,0.65); line-height: 1.6; margin-bottom: 16px; }
+    .pending-actions { display: flex; gap: 10px; }
+    .btn-approve {
+      padding: 8px 18px; background: rgba(72,199,142,0.2);
+      color: #48c78e; border: 1px solid rgba(72,199,142,0.4);
+      border-radius: var(--radius-sm); font-size: 13px; font-weight: 600;
+      cursor: pointer; transition: var(--transition);
+    }
+    .btn-approve:hover { background: rgba(72,199,142,0.35); }
+    .btn-reject {
+      padding: 8px 18px; background: rgba(240,80,80,0.15);
+      color: #f05050; border: 1px solid rgba(240,80,80,0.3);
+      border-radius: var(--radius-sm); font-size: 13px; font-weight: 600;
+      cursor: pointer; transition: var(--transition);
+    }
+    .btn-reject:hover { background: rgba(240,80,80,0.3); }
+    .admin-login {
+      background: var(--navy-mid); border-radius: var(--radius-lg);
+      max-width: 400px; width: 100%; padding: 48px; position: relative;
+      border: 1px solid rgba(201,168,76,0.3); text-align: center;
+    }
+    .admin-login-icon { font-size: 48px; margin-bottom: 16px; }
+    .admin-login-title {
+      font-family: 'Playfair Display', serif; font-size: 22px;
+      color: var(--white); margin-bottom: 8px;
+    }
+    .admin-login p { font-size: 13px; color: rgba(245,240,232,0.5); margin-bottom: 28px; }
+    .admin-password-wrap { position: relative; }
+    .admin-password-wrap input {
+      width: 100%; padding: 12px 16px; background: rgba(255,255,255,0.06);
+      border: 1.5px solid rgba(201,168,76,0.3); border-radius: var(--radius-sm);
+      font-family: 'DM Sans', sans-serif; font-size: 14.5px;
+      color: var(--white); outline: none; transition: var(--transition);
+      text-align: center; letter-spacing: 0.2em;
+    }
+    .admin-password-wrap input:focus { border-color: var(--gold); }
+    .admin-err { color: #f05050; font-size: 12px; margin-top: 8px; min-height: 18px; }
+    .admin-empty { text-align: center; padding: 48px; color: rgba(245,240,232,0.4); }
+    .admin-empty .empty-icon { font-size: 48px; margin-bottom: 12px; }
+
+    /* ============================================================
+       FOOTER
+    ============================================================ */
+    footer {
+      background: #060E1A; padding: 72px 0 0;
+      border-top: 1px solid rgba(201,168,76,0.15);
+    }
+    .footer-grid {
+      display: grid; grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 48px; padding-bottom: 60px;
+      border-bottom: 1px solid rgba(201,168,76,0.1);
+    }
+    .footer-brand-desc {
+      font-size: 14px; color: rgba(245,240,232,0.5);
+      line-height: 1.75; margin: 18px 0 24px; max-width: 300px;
+    }
+    .footer-socials { display: flex; gap: 10px; }
+    .footer-social {
+      width: 38px; height: 38px; border-radius: 8px;
+      background: rgba(201,168,76,0.1); border: 1px solid rgba(201,168,76,0.2);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px; text-decoration: none; transition: var(--transition);
+    }
+    .footer-social:hover { background: var(--gold); transform: translateY(-3px); }
+    .footer-col-title {
+      font-family: 'Playfair Display', serif; font-size: 15px;
+      font-weight: 600; color: var(--white); margin-bottom: 20px;
+    }
+    .footer-links { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+    .footer-links a {
+      color: rgba(245,240,232,0.5); font-size: 13.5px; text-decoration: none;
+      transition: var(--transition);
+    }
+    .footer-links a:hover { color: var(--gold); padding-left: 6px; }
+    .footer-bottom {
+      padding: 24px 0; text-align: center;
+      font-size: 12.5px; color: rgba(245,240,232,0.3);
+      letter-spacing: 0.06em;
+    }
+    .footer-bottom span { color: var(--gold); }
+    .footer-admin-trigger {
+      background: none; border: none; cursor: pointer;
+      color: rgba(245,240,232,0.15); font-size: 11px;
+      margin-left: 16px; transition: var(--transition);
+      font-family: 'DM Mono', monospace; letter-spacing: 0.1em;
+    }
+    .footer-admin-trigger:hover { color: var(--gold); }
+
+    /* ============================================================
+       ADMIN TABS & UPLOAD UI
+    ============================================================ */
+    .admin-tabs {
+      display: flex; gap: 4px; margin-bottom: 28px;
+      background: rgba(255,255,255,0.05); border-radius: var(--radius-sm);
+      padding: 4px;
+    }
+    .admin-tab {
+      flex: 1; padding: 10px; background: none; border: none;
+      color: rgba(245,240,232,0.5); font-family: 'DM Sans', sans-serif;
+      font-size: 13.5px; font-weight: 600; cursor: pointer;
+      border-radius: 5px; transition: var(--transition);
+    }
+    .admin-tab.active {
+      background: rgba(201,168,76,0.2); color: var(--gold);
+    }
+    .admin-tab-panel { display: none; }
+    .admin-tab-panel.active { display: block; }
+    .upload-dropzone {
+      border: 2px dashed rgba(201,168,76,0.35); border-radius: var(--radius-md);
+      padding: 28px; text-align: center; margin-bottom: 16px;
+      background: rgba(201,168,76,0.04); cursor: pointer;
+      transition: var(--transition); position: relative;
+    }
+    .upload-dropzone:hover { border-color: var(--gold); background: rgba(201,168,76,0.08); }
+    .upload-dropzone input[type=file] {
+      position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%;
+    }
+    .upload-dropzone-icon { font-size: 36px; margin-bottom: 8px; }
+    .upload-dropzone p { font-size: 13px; color: rgba(245,240,232,0.5); }
+    .upload-dropzone p strong { color: var(--gold); }
+    .dok-preview-img {
+      width: 100%; height: 160px; object-fit: cover;
+      border-radius: var(--radius-sm); margin-bottom: 16px;
+      display: none; border: 1px solid rgba(201,168,76,0.3);
+    }
+    .progress-wrap {
+      display: none; background: rgba(255,255,255,0.08);
+      border-radius: 30px; overflow: hidden; height: 24px; margin-bottom: 16px;
+    }
+    .progress-bar {
+      height: 100%; background: linear-gradient(90deg, var(--gold), var(--gold-light));
+      border-radius: 30px; width: 0%; transition: width 0.3s ease;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px; font-weight: 700; color: var(--navy);
+    }
+    .admin-dok-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;
+      margin-top: 20px;
+    }
+    .admin-dok-thumb {
+      position: relative; border-radius: var(--radius-sm);
+      overflow: hidden; aspect-ratio: 4/3;
+      background: rgba(255,255,255,0.06); border: 1px solid rgba(201,168,76,0.15);
+    }
+    .admin-dok-thumb img {
+      width: 100%; height: 100%; object-fit: cover; display: block;
+    }
+    .admin-dok-thumb-overlay {
+      position: absolute; inset: 0;
+      background: rgba(10,22,40,0.7); opacity: 0;
+      transition: var(--transition);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: 6px; padding: 8px;
+    }
+    .admin-dok-thumb:hover .admin-dok-thumb-overlay { opacity: 1; }
+    .admin-dok-thumb-title {
+      font-size: 11px; color: var(--white); text-align: center;
+      font-weight: 600; line-height: 1.3;
+    }
+    .btn-delete-dok {
+      padding: 5px 12px; background: rgba(240,80,80,0.2);
+      color: #f05050; border: 1px solid rgba(240,80,80,0.4);
+      border-radius: var(--radius-sm); font-size: 11px;
+      font-weight: 600; cursor: pointer; transition: var(--transition);
+    }
+    .btn-delete-dok:hover { background: rgba(240,80,80,0.4); }
+    .admin-dok-placeholder {
+      background: rgba(255,255,255,0.04); border-radius: var(--radius-sm);
+      aspect-ratio: 4/3; display: flex; align-items: center;
+      justify-content: center; font-size: 28px; border: 1px dashed rgba(201,168,76,0.2);
+    }
+
+    /* ============================================================
+       ANIMATIONS
+    ============================================================ */
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    @keyframes scrollPulse {
+      0%, 100% { opacity: 1; height: 50px; }
+      50% { opacity: 0.3; height: 30px; }
+    }
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+    @keyframes slideInRight {
+      from { opacity: 0; transform: translateX(30px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+    @keyframes float {
+      0%, 100% { transform: translateY(0) rotate(45deg); }
+      50% { transform: translateY(-20px) rotate(45deg); }
+    }
+    .hero-ornament-3 { animation: float 8s ease-in-out infinite; }
+
+    /* ============================================================
+       RESPONSIVE
+    ============================================================ */
+    @media (max-width: 1024px) {
+      .program-grid { grid-template-columns: repeat(2, 1fr); }
+      .artikel-grid { grid-template-columns: repeat(2, 1fr); }
+      .footer-grid { grid-template-columns: 1fr 1fr; }
+      .dok-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+    @media (max-width: 768px) {
+      .container { padding: 0 20px; }
+      .tentang-grid { grid-template-columns: 1fr; gap: 48px; }
+      .program-grid { grid-template-columns: 1fr; }
+      .artikel-grid { grid-template-columns: 1fr; }
+      .footer-grid { grid-template-columns: 1fr; gap: 32px; }
+      .dok-grid { grid-template-columns: 1fr 1fr; grid-auto-rows: 160px; }
+      .dok-item:nth-child(1), .dok-item:nth-child(7) { grid-column: span 1; grid-row: span 1; }
+      .nav-links, .nav-cta { display: none; }
+      .hamburger { display: flex; }
+      .hero-stats { gap: 28px; flex-wrap: wrap; }
+      .org-branches { flex-wrap: wrap; gap: 14px; }
+      .org-branches::before { display: none; }
+      .artikel-header { flex-direction: column; align-items: flex-start; }
+      .submit-modal-content { padding: 32px 24px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ============================================================
+     NAVBAR
+============================================================ -->
+<nav id="navbar">
+  <div class="container">
+    <div class="nav-inner">
+      <a href="#hero" class="nav-logo">
+        <div class="nav-logo-mark">H</div>
+        <div class="nav-logo-text">
+          <span>HIMO</span>
+          <span>Kota Surabaya</span>
+        </div>
+      </a>
+      <ul class="nav-links">
+        <li><a href="#tentang">Tentang</a></li>
+        <li><a href="#program">Program Kerja</a></li>
+        <li><a href="#dokumentasi">Dokumentasi</a></li>
+        <li><a href="#struktur">Organisasi</a></li>
+        <li><a href="#artikel">Artikel</a></li>
+      </ul>
+      <button class="btn-primary nav-cta" onclick="openSubmitModal()">✍️ Tulis Artikel</button>
+      <button class="hamburger" id="hamburgerBtn" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<!-- Mobile Menu -->
+<div class="mobile-menu" id="mobileMenu">
+  <button class="mobile-close" onclick="closeMobileMenu()">✕</button>
+  <a href="#tentang" onclick="closeMobileMenu()">Tentang HIMO</a>
+  <a href="#program" onclick="closeMobileMenu()">Program Kerja</a>
+  <a href="#dokumentasi" onclick="closeMobileMenu()">Dokumentasi</a>
+  <a href="#struktur" onclick="closeMobileMenu()">Organisasi</a>
+  <a href="#artikel" onclick="closeMobileMenu()">Artikel</a>
+  <a href="#" onclick="closeMobileMenu(); openSubmitModal();" style="color: var(--gold);">✍️ Tulis Artikel</a>
+</div>
+
+<!-- ============================================================
+     HERO
+============================================================ -->
+<section id="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-ornament"></div>
+  <div class="hero-ornament-2"></div>
+  <div class="hero-ornament-3"></div>
+
+  <div class="container">
+    <div class="hero-content">
+      <div class="hero-eyebrow">
+        <div class="hero-eyebrow-line"></div>
+        <span>Himpunan Musyawarah OSIS · Kota Surabaya</span>
+      </div>
+      <p class="hero-subtitle">Bersatu dalam Musyawarah</p>
+      <h1 class="hero-title">
+        Mewujudkan <em>Generasi Muda</em> yang Berkarakter
+      </h1>
+      <p class="hero-desc">
+        HIMO adalah wadah aspirasi, kolaborasi, dan kepemimpinan bagi seluruh Pengurus OSIS se-Kota Surabaya — menjembatani suara pelajar menuju perubahan yang bermakna.
+      </p>
+      <div class="hero-actions">
+        <a href="#tentang" class="btn-primary">Kenali Kami →</a>
+        <a href="#program" class="btn-outline">Program Kerja</a>
+      </div>
+      <div class="hero-stats">
+        <div>
+          <div class="hero-stat-num">80+</div>
+          <div class="hero-stat-label">Sekolah Anggota</div>
+        </div>
+        <div>
+          <div class="hero-stat-num">12</div>
+          <div class="hero-stat-label">Program Unggulan</div>
+        </div>
+        <div>
+          <div class="hero-stat-num">5K+</div>
+          <div class="hero-stat-label">Pelajar Terdampak</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="hero-scroll">
+    <span>Scroll</span>
+    <div class="scroll-line"></div>
+  </div>
+</section>
+
+<!-- ============================================================
+     TENTANG HIMO
+============================================================ -->
+<section id="tentang">
+  <div class="container">
+    <div class="tentang-grid">
+
+      <!-- Pengertian -->
+      <div class="tentang-left">
+        <div class="reveal">
+          <span class="section-tag">Tentang Kami</span>
+          <h2 class="section-title">Pengertian &amp; Tujuan HIMO</h2>
+          <span class="divider-gold"></span>
+          <p style="font-size:15.5px; line-height:1.85; color:var(--text-body);">
+            <strong>HIMO</strong> (Himpunan Musyawarah OSIS) adalah organisasi lintas sekolah yang beranggotakan perwakilan Pengurus OSIS dari seluruh SMP, SMA, dan SMK di Kota Surabaya. Organisasi ini berfungsi sebagai forum resmi untuk menyatukan visi, mengoordinasikan program, dan memperjuangkan aspirasi pelajar kepada pemangku kebijakan.
+          </p>
+          <div class="pengertian-card reveal" style="transition-delay:0.15s;">
+            <p>
+              HIMO lahir dari keyakinan bahwa <strong>pelajar bukan sekadar objek pembangunan</strong>, melainkan subjek aktif yang mampu berkontribusi nyata bagi kemajuan kota. Melalui musyawarah, HIMO menjamin setiap suara pelajar didengar dan dihormati.
+            </p>
+          </div>
+          <div style="margin-top: 28px; display:flex; gap:16px; flex-wrap:wrap;">
+            <div style="flex:1; min-width:140px; padding:20px; background:var(--white); border-radius:var(--radius-md); border:1px solid var(--border); text-align:center;" class="reveal" style="transition-delay:0.25s;">
+              <div style="font-family:'Playfair Display',serif; font-size:2rem; font-weight:700; color:var(--gold);">🎯</div>
+              <div style="font-size:13px; font-weight:600; color:var(--navy); margin-top:8px;">Visi</div>
+              <div style="font-size:12px; color:var(--text-muted); margin-top:4px; line-height:1.5;">Pelajar Surabaya yang berkarakter, inovatif, dan berdaya saing global</div>
+            </div>
+            <div style="flex:1; min-width:140px; padding:20px; background:var(--white); border-radius:var(--radius-md); border:1px solid var(--border); text-align:center;" class="reveal" style="transition-delay:0.35s;">
+              <div style="font-family:'Playfair Display',serif; font-size:2rem; font-weight:700; color:var(--gold);">🤝</div>
+              <div style="font-size:13px; font-weight:600; color:var(--navy); margin-top:8px;">Misi</div>
+              <div style="font-size:12px; color:var(--text-muted); margin-top:4px; line-height:1.5;">Menghimpun, menggerakkan, dan memberdayakan OSIS se-Kota Surabaya</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sejarah Timeline -->
+      <div class="tentang-right reveal-right">
+        <div class="timeline-label">Sejarah HIMO</div>
+        <div class="timeline" id="timeline">
+          <div class="timeline-item active" onclick="toggleTimeline(this)">
+            <div class="timeline-dot"></div>
+            <div class="timeline-year">2015</div>
+            <div class="timeline-title">Pendirian HIMO</div>
+            <div class="timeline-desc">HIMO resmi didirikan oleh perwakilan OSIS dari 32 sekolah di Surabaya sebagai respons atas kebutuhan forum koordinasi lintas sekolah yang terstruktur dan berkesinambungan.</div>
+          </div>
+          <div class="timeline-item" onclick="toggleTimeline(this)">
+            <div class="timeline-dot"></div>
+            <div class="timeline-year">2017</div>
+            <div class="timeline-title">Pengakuan Resmi Dinas Pendidikan</div>
+            <div class="timeline-desc">HIMO mendapatkan pengakuan resmi dari Dinas Pendidikan Kota Surabaya sebagai mitra strategis dalam pengembangan karakter dan kepemimpinan pelajar.</div>
+          </div>
+          <div class="timeline-item" onclick="toggleTimeline(this)">
+            <div class="timeline-dot"></div>
+            <div class="timeline-year">2019</div>
+            <div class="timeline-title">Ekspansi & Musyawarah Akbar I</div>
+            <div class="timeline-desc">Keanggotaan HIMO berkembang hingga mencakup lebih dari 60 sekolah. Musyawarah Akbar pertama digelar dengan agenda penyusunan AD/ART dan pemilihan pengurus pusat.</div>
+          </div>
+          <div class="timeline-item" onclick="toggleTimeline(this)">
+            <div class="timeline-dot"></div>
+            <div class="timeline-year">2021</div>
+            <div class="timeline-title">Transformasi Digital</div>
+            <div class="timeline-desc">Di tengah pandemi, HIMO bertransformasi menuju platform digital — menggelar webinar nasional, diskusi virtual, dan kolaborasi daring yang menjangkau ribuan pelajar.</div>
+          </div>
+          <div class="timeline-item" onclick="toggleTimeline(this)">
+            <div class="timeline-dot"></div>
+            <div class="timeline-year">2023</div>
+            <div class="timeline-title">Program Unggulan Berskala Kota</div>
+            <div class="timeline-desc">HIMO meluncurkan program-program unggulan berskala kota, termasuk HIMO Leaders Camp dan Surabaya Youth Summit yang menjadi agenda tahunan bergengsi.</div>
+          </div>
+          <div class="timeline-item" onclick="toggleTimeline(this)">
+            <div class="timeline-dot"></div>
+            <div class="timeline-year">2025</div>
+            <div class="timeline-title">Kini — 80+ Sekolah Anggota</div>
+            <div class="timeline-desc">HIMO terus berkembang dengan keanggotaan lebih dari 80 sekolah, menjalankan 12 program unggulan aktif, dan berdampak pada lebih dari 5.000 pelajar Surabaya.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     PROGRAM KERJA
+============================================================ -->
+<section id="program">
+  <div class="container" style="position:relative; z-index:1;">
+    <div class="program-header">
+      <div class="reveal">
+        <span class="section-tag" style="color:var(--gold);">Program Unggulan</span>
+        <h2 class="section-title light">Program Kerja Andalan</h2>
+        <span class="divider-gold"></span>
+        <p style="font-size:15px; color:rgba(245,240,232,0.6); max-width:520px; line-height:1.75;">Rangkaian program dirancang untuk mengembangkan potensi, mempererat kolaborasi, dan menciptakan dampak nyata bagi pelajar Surabaya.</p>
+      </div>
+    </div>
+    <div class="program-grid" id="programGrid">
+      <!-- Cards injected by JS -->
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     DOKUMENTASI
+============================================================ -->
+<section id="dokumentasi">
+  <div class="container">
+    <div class="dok-header reveal">
+      <span class="section-tag">Galeri Kegiatan</span>
+      <h2 class="section-title">Dokumentasi</h2>
+      <span class="divider-gold"></span>
+      <p style="font-size:15px; color:var(--text-muted); max-width:480px; line-height:1.75;">Rekam jejak perjalanan dan kegiatan HIMO dalam gambar.</p>
+    </div>
+    <div class="dok-filter reveal" id="dokFilter">
+      <button class="dok-btn active" onclick="filterDok('semua', this)">Semua</button>
+      <button class="dok-btn" onclick="filterDok('musyawarah', this)">Musyawarah</button>
+      <button class="dok-btn" onclick="filterDok('pelatihan', this)">Pelatihan</button>
+      <button class="dok-btn" onclick="filterDok('sosial', this)">Sosial</button>
+      <button class="dok-btn" onclick="filterDok('event', this)">Event</button>
+    </div>
+    <div class="dok-grid reveal" id="dokGrid">
+      <!-- Injected by JS -->
+    </div>
+  </div>
+</section>
+
+<!-- Lightbox -->
+<div class="lightbox" id="lightbox" onclick="closeLightbox(event)">
+  <button class="lightbox-close" onclick="closeLightbox()">✕</button>
+  <div class="lightbox-content">
+    <div class="lightbox-visual" id="lightboxVisual"></div>
+    <h3 class="lightbox-title" id="lightboxTitle"></h3>
+    <p class="lightbox-desc" id="lightboxDesc"></p>
+  </div>
+</div>
+
+<!-- ============================================================
+     STRUKTUR ORGANISASI
+============================================================ -->
+<section id="struktur">
+  <div class="container" style="position:relative; z-index:1;">
+    <div class="reveal" style="text-align:center; margin-bottom:64px;">
+      <span class="section-tag" style="justify-content:center;">Kepengurusan</span>
+      <h2 class="section-title light" style="text-align:center;">Struktur Organisasi</h2>
+      <span class="divider-gold" style="margin:20px auto 0;"></span>
+    </div>
+
+    <div class="org-chart reveal">
+      <!-- Ketua Umum -->
+      <div class="org-level">
+        <div class="org-card top">
+          <div class="org-avatar">👑</div>
+          <div class="org-role">Ketua Umum</div>
+          <div class="org-name">Rizky Aditya P.</div>
+        </div>
+      </div>
+      <div class="org-connector"><div class="org-connector-line"></div></div>
+
+      <!-- Wakil & Sekretaris & Bendahara -->
+      <div class="org-level">
+        <div class="org-card">
+          <div class="org-avatar" style="background:linear-gradient(135deg,#7894c8,#4a6fa5);">🤝</div>
+          <div class="org-role">Wakil Ketua</div>
+          <div class="org-name">Salsabila N. H.</div>
+        </div>
+        <div class="org-card">
+          <div class="org-avatar" style="background:linear-gradient(135deg,#98d4a0,#5aaf63);">📝</div>
+          <div class="org-role">Sekretaris</div>
+          <div class="org-name">M. Farhan A.</div>
+        </div>
+        <div class="org-card">
+          <div class="org-avatar" style="background:linear-gradient(135deg,#e09e6e,#c4713a);">💼</div>
+          <div class="org-role">Bendahara</div>
+          <div class="org-name">Aulia Rahma D.</div>
+        </div>
+      </div>
+      <div class="org-connector"><div class="org-connector-line"></div></div>
+
+      <!-- Divisi -->
+      <div class="org-branches">
+        <div class="org-branch">
+          <div class="org-branch-line"></div>
+          <div class="org-card" style="min-width:140px;">
+            <div class="org-avatar" style="width:42px;height:42px;font-size:18px;background:linear-gradient(135deg,#c084fc,#8b5cf6);">🎓</div>
+            <div class="org-role" style="font-size:9px;">Divisi</div>
+            <div class="org-name" style="font-size:13px;">Pendidikan &amp; Litbang</div>
+          </div>
+        </div>
+        <div class="org-branch">
+          <div class="org-branch-line"></div>
+          <div class="org-card" style="min-width:140px;">
+            <div class="org-avatar" style="width:42px;height:42px;font-size:18px;background:linear-gradient(135deg,#f97316,#ea580c);">📣</div>
+            <div class="org-role" style="font-size:9px;">Divisi</div>
+            <div class="org-name" style="font-size:13px;">Humas &amp; Informasi</div>
+          </div>
+        </div>
+        <div class="org-branch">
+          <div class="org-branch-line"></div>
+          <div class="org-card" style="min-width:140px;">
+            <div class="org-avatar" style="width:42px;height:42px;font-size:18px;background:linear-gradient(135deg,#34d399,#059669);">🌍</div>
+            <div class="org-role" style="font-size:9px;">Divisi</div>
+            <div class="org-name" style="font-size:13px;">Sosial &amp; Lingkungan</div>
+          </div>
+        </div>
+        <div class="org-branch">
+          <div class="org-branch-line"></div>
+          <div class="org-card" style="min-width:140px;">
+            <div class="org-avatar" style="width:42px;height:42px;font-size:18px;background:linear-gradient(135deg,#f472b6,#db2777);">🎨</div>
+            <div class="org-role" style="font-size:9px;">Divisi</div>
+            <div class="org-name" style="font-size:13px;">Seni &amp; Kreativitas</div>
+          </div>
+        </div>
+        <div class="org-branch">
+          <div class="org-branch-line"></div>
+          <div class="org-card" style="min-width:140px;">
+            <div class="org-avatar" style="width:42px;height:42px;font-size:18px;background:linear-gradient(135deg,#60a5fa,#2563eb);">⚽</div>
+            <div class="org-role" style="font-size:9px;">Divisi</div>
+            <div class="org-name" style="font-size:13px;">Olahraga &amp; Kesehatan</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     ARTIKEL
+============================================================ -->
+<section id="artikel">
+  <div class="container" style="position:relative; z-index:1;">
+    <div class="artikel-header">
+      <div class="reveal">
+        <span class="section-tag">Wawasan & Opini</span>
+        <h2 class="section-title">Artikel HIMO</h2>
+        <span class="divider-gold"></span>
+      </div>
+      <button class="btn-primary reveal" onclick="openSubmitModal()">✍️ Kirim Artikel</button>
+    </div>
+    <div class="artikel-grid" id="artikelGrid">
+      <!-- Injected by JS -->
+    </div>
+  </div>
+</section>
+
+<!-- Article Detail Modal -->
+<div class="article-modal" id="articleModal">
+  <div class="article-modal-content">
+    <button class="modal-close-btn" onclick="closeArticleModal()">✕</button>
+    <div class="article-modal-hero" id="articleModalHero"></div>
+    <div class="article-modal-body">
+      <span class="article-modal-cat" id="articleModalCat"></span>
+      <h2 class="article-modal-title" id="articleModalTitle"></h2>
+      <div class="article-modal-meta" id="articleModalMeta"></div>
+      <div class="article-modal-text" id="articleModalText"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Submit Article Modal -->
+<div class="submit-modal" id="submitModal">
+  <div class="submit-modal-content">
+    <button class="modal-close-btn" onclick="closeSubmitModal()" style="position:absolute; top:16px; right:16px;">✕</button>
+    <span class="section-tag" style="margin-bottom:8px;">Kontribusi Konten</span>
+    <h2 style="font-family:'Playfair Display',serif; font-size:24px; color:var(--navy); margin-bottom:6px;">Kirim Artikel</h2>
+    <p style="font-size:13.5px; color:var(--text-muted); margin-bottom:28px; line-height:1.6;">Artikelmu akan ditinjau oleh tim HIMO sebelum dipublikasikan. Pastikan konten sesuai dengan nilai-nilai organisasi.</p>
+
+    <div class="form-group">
+      <label class="form-label">Nama Lengkap <span>*</span></label>
+      <input type="text" class="form-input" id="f-nama" placeholder="Contoh: Budi Santoso" />
+    </div>
+    <div class="form-group">
+      <label class="form-label">Email / Kontak <span>*</span></label>
+      <input type="email" class="form-input" id="f-email" placeholder="email@sekolah.sch.id" />
+    </div>
+    <div class="form-group">
+      <label class="form-label">Asal Sekolah <span>*</span></label>
+      <input type="text" class="form-input" id="f-sekolah" placeholder="Contoh: SMA Negeri 5 Surabaya" />
+    </div>
+    <div class="form-group">
+      <label class="form-label">Kategori <span>*</span></label>
+      <select class="form-select" id="f-kategori">
+        <option value="">— Pilih kategori —</option>
+        <option value="Kepemimpinan">Kepemimpinan</option>
+        <option value="Pendidikan">Pendidikan</option>
+        <option value="Sosial">Sosial</option>
+        <option value="Teknologi">Teknologi</option>
+        <option value="Opini">Opini</option>
+        <option value="Kegiatan">Kegiatan</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Judul Artikel <span>*</span></label>
+      <input type="text" class="form-input" id="f-judul" placeholder="Judul yang menarik dan informatif" />
+    </div>
+    <div class="form-group">
+      <label class="form-label">Isi Artikel <span>*</span></label>
+      <textarea class="form-textarea" id="f-isi" placeholder="Tulis artikelmu di sini. Minimal 150 karakter..."></textarea>
+      <p class="form-note">⚠️ Artikel yang mengandung ujaran kebencian, SARA, atau konten negatif tidak akan diterbitkan.</p>
+    </div>
+    <button class="btn-primary" style="width:100%; justify-content:center;" onclick="submitArtikel()">Kirim untuk Ditinjau →</button>
+  </div>
+</div>
+
+<!-- Admin Panel -->
+<div class="admin-panel" id="adminPanel">
+  <div id="adminLoginSection" class="admin-login">
+    <button class="modal-close-btn" onclick="closeAdminPanel()" style="position:absolute; top:16px; right:16px;">✕</button>
+    <div class="admin-login-icon">🔐</div>
+    <h2 class="admin-login-title">Panel Admin HIMO</h2>
+    <p>Masukkan kode akses untuk mengelola artikel yang masuk.</p>
+    <div class="admin-password-wrap">
+      <input type="password" id="adminPass" placeholder="• • • • • •" onkeydown="if(event.key==='Enter') checkAdmin()" />
+    </div>
+    <p class="admin-err" id="adminErr"></p>
+    <button class="btn-primary" style="width:100%; justify-content:center; margin-top:16px;" onclick="checkAdmin()">Masuk →</button>
+  </div>
+  <div id="adminDashboard" class="admin-content" style="display:none;">
+    <button class="modal-close-btn" onclick="closeAdminPanel()" style="position:absolute; top:16px; right:16px; background:rgba(255,255,255,0.1);">✕</button>
+    <h2 class="admin-title">🛡️ Panel Admin HIMO</h2>
+    <p class="admin-subtitle">Kelola artikel dan dokumentasi kegiatan.</p>
+    <div class="admin-tabs">
+      <button class="admin-tab active" onclick="switchAdminTab('artikel', this)">📝 Artikel Masuk</button>
+      <button class="admin-tab" onclick="switchAdminTab('dokumentasi', this)">📸 Dokumentasi</button>
+    </div>
+    <div class="admin-tab-panel active" id="tab-artikel">
+      <div class="pending-list" id="pendingList"></div>
+    </div>
+    <div class="admin-tab-panel" id="tab-dokumentasi">
+      <div class="upload-dropzone">
+        <input type="file" id="dok-file" accept="image/*" onchange="previewDokFoto(this)" />
+        <div class="upload-dropzone-icon">🖼️</div>
+        <p><strong>Klik untuk pilih foto</strong> atau seret ke sini</p>
+        <p style="margin-top:4px;font-size:11px;">JPG, PNG, WEBP · Maks. 5 MB</p>
+      </div>
+      <img id="dok-preview-img" class="dok-preview-img" src="" alt="preview" />
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
+        <div>
+          <label class="form-label" style="color:rgba(245,240,232,0.7);">Judul Foto <span style="color:var(--gold)">*</span></label>
+          <input type="text" class="form-input" id="dok-judul" placeholder="Contoh: Musyawarah Akbar 2025" style="background:rgba(255,255,255,0.06);border-color:rgba(201,168,76,0.25);color:var(--white);" />
+        </div>
+        <div>
+          <label class="form-label" style="color:rgba(245,240,232,0.7);">Kategori <span style="color:var(--gold)">*</span></label>
+          <select class="form-select" id="dok-cat" style="background:rgba(255,255,255,0.06);border-color:rgba(201,168,76,0.25);color:var(--white);">
+            <option value="">— Pilih —</option>
+            <option value="musyawarah">Musyawarah</option>
+            <option value="pelatihan">Pelatihan</option>
+            <option value="sosial">Sosial</option>
+            <option value="event">Event</option>
+          </select>
+        </div>
+      </div>
+      <div style="margin-bottom:16px;">
+        <label class="form-label" style="color:rgba(245,240,232,0.7);">Keterangan</label>
+        <input type="text" class="form-input" id="dok-desc" placeholder="Deskripsi singkat kegiatan" style="background:rgba(255,255,255,0.06);border-color:rgba(201,168,76,0.25);color:var(--white);" />
+      </div>
+      <div class="progress-wrap" id="dok-progress">
+        <div class="progress-bar" id="dok-progress-bar"></div>
+      </div>
+      <button class="btn-primary" id="dok-upload-btn" style="width:100%;justify-content:center;margin-bottom:28px;" onclick="window.uploadDokumentasi()">⬆️ Upload Foto</button>
+      <div style="border-top:1px solid rgba(201,168,76,0.15);padding-top:20px;">
+        <p style="font-size:12px;color:rgba(245,240,232,0.4);margin-bottom:12px;font-family:'DM Mono',monospace;letter-spacing:0.1em;text-transform:uppercase;">Foto Tersimpan</p>
+        <div class="admin-dok-grid" id="adminDokGrid">
+          <div class="admin-dok-placeholder">📷</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="success-toast" id="toast"></div>
+
+<!-- ============================================================
+     FOOTER
+============================================================ -->
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a href="#hero" class="nav-logo" style="margin-bottom:4px; display:inline-flex;">
+          <div class="nav-logo-mark" style="width:48px;height:48px;font-size:20px;">H</div>
+          <div class="nav-logo-text">
+            <span>HIMO</span>
+            <span>Kota Surabaya</span>
+          </div>
+        </a>
+        <p class="footer-brand-desc">
+          Himpunan Musyawarah OSIS Kota Surabaya — forum kolaborasi dan aspirasi pelajar untuk Surabaya yang lebih baik.
+        </p>
+        <div class="footer-socials">
+          <a href="#" class="footer-social" title="Instagram">📸</a>
+          <a href="#" class="footer-social" title="Twitter / X">🐦</a>
+          <a href="#" class="footer-social" title="YouTube">▶️</a>
+          <a href="#" class="footer-social" title="Email">✉️</a>
+        </div>
+      </div>
+      <div>
+        <h4 class="footer-col-title">Navigasi</h4>
+        <ul class="footer-links">
+          <li><a href="#hero">Beranda</a></li>
+          <li><a href="#tentang">Tentang HIMO</a></li>
+          <li><a href="#program">Program Kerja</a></li>
+          <li><a href="#dokumentasi">Dokumentasi</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="footer-col-title">Organisasi</h4>
+        <ul class="footer-links">
+          <li><a href="#struktur">Struktur Pengurus</a></li>
+          <li><a href="#artikel">Artikel</a></li>
+          <li><a href="#" onclick="openSubmitModal()">Kirim Artikel</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="footer-col-title">Kontak</h4>
+        <ul class="footer-links">
+          <li><a href="#">himo.surabaya@gmail.com</a></li>
+          <li><a href="#">Gedung Dinas Pendidikan Kota Surabaya</a></li>
+          <li><a href="#">Jl. Jagir Wonokromo No. 354, Surabaya</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      © 2025 <span>HIMO</span> — Himpunan Musyawarah OSIS Kota Surabaya. Seluruh hak dilindungi.
+      <button class="footer-admin-trigger" onclick="openAdminPanel()" title="Admin">⚙ admin</button>
+    </div>
+  </div>
+</footer>
+
+<!-- ============================================================
+     FIREBASE SDK
+============================================================ -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import {
+    getFirestore, collection, getDocs, addDoc, updateDoc, deleteDoc,
+    doc, query, where, onSnapshot, serverTimestamp
+  } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  import {
+    getStorage, ref, uploadBytesResumable, getDownloadURL, deleteObject
+  } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
+
+  /* ── Firebase Init ── */
+  const firebaseConfig = {
+  apiKey: "AIzaSyCeIE25FOFUPusQtrSEroBqhti2iOSibIo",
+  authDomain: "himokotasby-11f82.firebaseapp.com",
+  projectId: "himokotasby-11f82",
+  storageBucket: "himokotasby-11f82.firebasestorage.app",
+  messagingSenderId: "920231507460",
+  appId: "1:920231507460:web:7f957ac15388c8c2026751",
+  measurementId: "G-0Z0BPXB8XG"
+};
+
+  const app     = initializeApp(firebaseConfig);
+  const db      = getFirestore(app);
+  const storage = getStorage(app);
+  const COL     = 'articles';
+  const DOK_COL = 'dokumentasi';
+
+  /* ── Artikel default (seed sekali jika Firestore kosong) ── */
+  const defaultArticles = [
+    {
+      emoji: '🎓', category: 'Kepemimpinan',
+      title: 'Menjadi Pemimpin Muda yang Adaptif di Era Digital',
+      author: 'Rizky Aditya P.', sekolah: 'SMAN 5 Surabaya', date: '12 Mar 2025',
+      excerpt: 'Kepemimpinan di era digital bukan lagi soal siapa yang paling keras bersuara, melainkan siapa yang paling cepat belajar dan beradaptasi terhadap perubahan...',
+      content: `<p>Kepemimpinan di era digital bukan lagi soal siapa yang paling keras bersuara, melainkan siapa yang paling cepat belajar dan beradaptasi terhadap perubahan. Seorang pemimpin muda hari ini dituntut untuk menguasai lebih dari sekadar kemampuan berbicara di depan umum.</p><p>Dalam lingkungan organisasi pelajar seperti HIMO, kemampuan beradaptasi menjadi kunci utama. Teknologi bergerak cepat, isu sosial terus berkembang, dan ekspektasi anggota semakin tinggi. Pemimpin yang stagnan akan tertinggal — bukan karena kalah pintar, tetapi karena enggan belajar.</p><p>Ada tiga pilar yang perlu dikuasai pemimpin muda: literasi digital yang kuat, empati interpersonal yang mendalam, dan kemampuan pengambilan keputusan berbasis data. Ketiga hal ini bukan bawaan lahir — semuanya bisa dipelajari dan diasah melalui pengalaman nyata di organisasi.</p>`,
+      status: 'approved'
+    },
+    {
+      emoji: '🌍', category: 'Sosial',
+      title: 'Kontribusi OSIS dalam Membangun Budaya Literasi Sekolah',
+      author: 'Salsabila N. H.', sekolah: 'SMAN 2 Surabaya', date: '8 Mar 2025',
+      excerpt: 'Literasi bukan sekadar kemampuan membaca dan menulis. Dalam konteks pendidikan modern, literasi mencakup kemampuan kritis dalam memahami, mengevaluasi, dan menciptakan informasi...',
+      content: `<p>Literasi bukan sekadar kemampuan membaca dan menulis. Dalam konteks pendidikan modern, literasi mencakup kemampuan kritis dalam memahami, mengevaluasi, dan menciptakan informasi di berbagai medium — termasuk digital.</p><p>OSIS memiliki posisi strategis dalam membangun budaya literasi di sekolah. Sebagai representasi suara pelajar, OSIS dapat menginisiasi program yang tidak hanya mengajak siswa membaca, tetapi juga menciptakan ruang diskusi, bedah buku, dan penulisan kreatif yang menyenangkan.</p>`,
+      status: 'approved'
+    },
+    {
+      emoji: '💡', category: 'Teknologi',
+      title: 'Pemanfaatan Teknologi dalam Manajemen Organisasi Pelajar Modern',
+      author: 'M. Farhan A.', sekolah: 'SMKN 1 Surabaya', date: '1 Mar 2025',
+      excerpt: 'Di era di mana hampir seluruh aspek kehidupan terdigitalisasi, organisasi pelajar yang masih mengandalkan cara konvensional akan semakin kehilangan relevansi di mata anggotanya...',
+      content: `<p>Di era di mana hampir seluruh aspek kehidupan terdigitalisasi, organisasi pelajar yang masih mengandalkan cara konvensional akan semakin kehilangan relevansi di mata anggotanya.</p><p>Beberapa tools yang bisa diadopsi OSIS secara gratis: Google Workspace untuk kolaborasi dokumen, Trello atau Notion untuk manajemen proyek, Canva untuk konten kreatif, dan platform media sosial yang dikelola secara terstruktur untuk komunikasi publik.</p>`,
+      status: 'approved'
+    },
+  ];
+
+  /* ── Seed default articles jika koleksi masih kosong ── */
+  async function seedIfEmpty() {
+    const snap = await getDocs(collection(db, COL));
+    if (snap.empty) {
+      for (const a of defaultArticles) {
+        await addDoc(collection(db, COL), { ...a, createdAt: serverTimestamp() });
+      }
+    }
+  }
+
+  /* ── Realtime listener: artikel approved → tampil otomatis ── */
+  function listenApprovedArticles() {
+    const q = query(collection(db, COL), where('status', '==', 'approved'));
+    onSnapshot(q, (snap) => {
+      const articles = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      window.articleCache = articles; // expose ke non-module script
+      if (window.renderArtikel) window.renderArtikel(articles);
+    });
+  }
+
+  /* ── Realtime listener: artikel pending → update panel admin ── */
+  function listenPendingArticles() {
+    const q = query(collection(db, COL), where('status', '==', 'pending'));
+    onSnapshot(q, (snap) => {
+      const pending = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      if (window.renderPendingList) window.renderPendingList(pending);
+    });
+  }
+
+  /* ── Submit artikel baru ke Firestore ── */
+  async function submitArtikel() {
+    const nama     = document.getElementById('f-nama').value.trim();
+    const email    = document.getElementById('f-email').value.trim();
+    const sekolah  = document.getElementById('f-sekolah').value.trim();
+    const kategori = document.getElementById('f-kategori').value;
+    const judul    = document.getElementById('f-judul').value.trim();
+    const isi      = document.getElementById('f-isi').value.trim();
+
+    if (!nama || !email || !sekolah || !kategori || !judul || !isi) {
+      showToast('⚠️ Harap isi semua kolom yang wajib diisi.'); return;
+    }
+    if (isi.length < 150) {
+      showToast('⚠️ Isi artikel minimal 150 karakter.'); return;
+    }
+
+    const btn = document.querySelector('#submitModal .btn-primary');
+    btn.textContent = 'Mengirim…'; btn.disabled = true;
+
+    const emojis = ['📝','💡','🌟','🎓','🌿','📣','🤝','🔬'];
+    const now    = new Date();
+    const dateStr = now.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
+
+    try {
+      await addDoc(collection(db, COL), {
+        emoji:    emojis[Math.floor(Math.random() * emojis.length)],
+        category: kategori,
+        title:    judul,
+        author:   nama,
+        email:    email,
+        sekolah:  sekolah,
+        date:     dateStr,
+        excerpt:  isi.substring(0, 160) + '...',
+        content:  `<p>${isi.replace(/\n\n/g, '</p><p>').replace(/\n/g, '<br>')}</p>`,
+        status:   'pending',
+        createdAt: serverTimestamp()
+      });
+      ['f-nama','f-email','f-sekolah','f-judul','f-isi'].forEach(id => document.getElementById(id).value = '');
+      document.getElementById('f-kategori').value = '';
+      closeSubmitModal();
+      showToast('✅ Artikelmu berhasil dikirim! Tim HIMO akan segera meninjaunya.');
+    } catch (err) {
+      showToast('❌ Gagal mengirim. Periksa koneksi internetmu.');
+      console.error(err);
+    } finally {
+      btn.textContent = 'Kirim untuk Ditinjau →'; btn.disabled = false;
+    }
+  }
+
+  /* ── Admin: setujui artikel ── */
+  async function approveArticle(id) {
+    try {
+      await updateDoc(doc(db, COL, id), { status: 'approved' });
+      showToast('✅ Artikel berhasil diterbitkan!');
+    } catch(e) { showToast('❌ Gagal menyetujui artikel.'); }
+  }
+
+  /* ── Admin: tolak & hapus artikel ── */
+  async function rejectArticle(id) {
+    try {
+      await deleteDoc(doc(db, COL, id));
+      showToast('🗑️ Artikel telah ditolak dan dihapus.');
+    } catch(e) { showToast('❌ Gagal menghapus artikel.'); }
+  }
+
+  /* ── Upload foto dokumentasi ke Storage + simpan ke Firestore ── */
+  async function uploadDokumentasi() {
+    const fileInput = document.getElementById('dok-file');
+    const judul     = document.getElementById('dok-judul').value.trim();
+    const desc      = document.getElementById('dok-desc').value.trim();
+    const cat       = document.getElementById('dok-cat').value;
+    const file      = fileInput.files[0];
+
+    if (!file || !judul || !cat) {
+      window.showToast('⚠️ Harap isi semua kolom dan pilih foto.'); return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      window.showToast('⚠️ Ukuran foto maksimal 5 MB.'); return;
+    }
+
+    const btn = document.getElementById('dok-upload-btn');
+    const bar = document.getElementById('dok-progress-bar');
+    const prog = document.getElementById('dok-progress');
+    btn.disabled = true; btn.textContent = 'Mengupload…';
+    prog.style.display = 'block';
+
+    const ext      = file.name.split('.').pop();
+    const filename = `dokumentasi/${Date.now()}.${ext}`;
+    const storRef  = ref(storage, filename);
+    const task     = uploadBytesResumable(storRef, file);
+
+    task.on('state_changed',
+      (snap) => {
+        const pct = Math.round(snap.bytesTransferred / snap.totalBytes * 100);
+        bar.style.width = pct + '%';
+        bar.textContent = pct + '%';
+      },
+      (err) => {
+        window.showToast('❌ Upload gagal: ' + err.message);
+        btn.disabled = false; btn.textContent = '⬆️ Upload Foto';
+        prog.style.display = 'none';
+      },
+      async () => {
+        const url = await getDownloadURL(task.snapshot.ref);
+        await addDoc(collection(db, DOK_COL), {
+          imgUrl: url, storagePath: filename,
+          title: judul, desc: desc || '', category: cat,
+          createdAt: serverTimestamp()
+        });
+        // reset form
+        fileInput.value = '';
+        document.getElementById('dok-judul').value = '';
+        document.getElementById('dok-desc').value = '';
+        document.getElementById('dok-cat').value = '';
+        document.getElementById('dok-preview-img').style.display = 'none';
+        btn.disabled = false; btn.textContent = '⬆️ Upload Foto';
+        prog.style.display = 'none'; bar.style.width = '0%'; bar.textContent = '';
+        window.showToast('✅ Foto berhasil diupload dan ditampilkan di galeri!');
+      }
+    );
+  }
+
+  /* ── Hapus foto dokumentasi dari Storage + Firestore ── */
+  async function deleteDokumentasi(id, storagePath) {
+    if (!confirm('Hapus foto ini dari galeri?')) return;
+    try {
+      await deleteDoc(doc(db, DOK_COL, id));
+      if (storagePath) {
+        try { await deleteObject(ref(storage, storagePath)); } catch(e) {}
+      }
+      window.showToast('🗑️ Foto berhasil dihapus.');
+    } catch(e) { window.showToast('❌ Gagal menghapus foto.'); }
+  }
+
+  /* ── Realtime listener: galeri dokumentasi → tampil otomatis ── */
+  function listenDokumentasi() {
+    onSnapshot(collection(db, DOK_COL), (snap) => {
+      const items = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      window.dokFirestoreCache = items;
+      if (window.renderDokFirestore) window.renderDokFirestore(items);
+      if (window.renderAdminDokList) window.renderAdminDokList(items);
+    });
+  }
+
+  /* ── Ekspos ke scope global (dipanggil dari HTML onclick) ── */
+  window.submitArtikel      = submitArtikel;
+  window.approveArticle     = approveArticle;
+  window.rejectArticle      = rejectArticle;
+  window.uploadDokumentasi  = uploadDokumentasi;
+  window.deleteDokumentasi  = deleteDokumentasi;
+
+  /* ── INIT Firebase ── */
+  (async () => {
+    await seedIfEmpty();
+    listenApprovedArticles();
+    listenDokumentasi();
+  })();
+
+  /* ── Admin panel: aktifkan listener pending saat login berhasil ── */
+  window._adminListenerStarted = false;
+  window._startAdminListener = () => {
+    if (!window._adminListenerStarted) {
+      listenPendingArticles();
+      window._adminListenerStarted = true;
+    }
+  };
+
+// ─────────────────────────────────────────────────────────────
+</script>
+
+<!-- ============================================================
+     JAVASCRIPT (non-Firebase)
+============================================================ -->
+<script>
+  /* ============================================================
+     DATA — Program Kerja
+  ============================================================ */
+  const programData = [
+    { icon: '🏕️', title: 'HIMO Leaders Camp', desc: 'Program pelatihan kepemimpinan intensif 3 hari bagi perwakilan OSIS terpilih, mencakup public speaking, manajemen organisasi, dan team building.', status: 'aktif' },
+    { icon: '🎤', title: 'Surabaya Youth Summit', desc: 'Forum tahunan bergengsi yang mempertemukan pelajar, akademisi, dan pemimpin kota untuk berdialog mengenai isu-isu pendidikan dan kepemudaan.', status: 'aktif' },
+    { icon: '📚', title: 'HIMO Mengajar', desc: 'Program bakti sosial di mana pengurus HIMO memberikan bimbingan belajar dan motivasi kepada pelajar di daerah terpencil dan kurang mampu.', status: 'aktif' },
+    { icon: '🌿', title: 'Green School Challenge', desc: 'Kompetisi antar sekolah untuk mewujudkan lingkungan sekolah yang hijau, bersih, dan berkelanjutan. Dinilai oleh tim ahli lingkungan.', status: 'selesai' },
+    { icon: '💡', title: 'HIMO Innovate', desc: 'Festival inovasi dan teknologi pelajar — menampilkan karya terbaik di bidang sains, teknologi, dan kewirausahaan pelajar Surabaya.', status: 'upcoming' },
+    { icon: '🤝', title: 'Forum Koordinasi Bulanan', desc: 'Pertemuan rutin perwakilan OSIS tiap sekolah untuk berbagi informasi, menyelaraskan program, dan menyampaikan aspirasi kepada pengurus pusat.', status: 'aktif' },
+  ];
+
+  /* ============================================================
+     DATA — Dokumentasi
+  ============================================================ */
+  const dokData = [
+    { emoji: '🎤', title: 'Musyawarah Akbar 2024', desc: 'Pemilihan pengurus HIMO periode 2024–2025', category: 'musyawarah', bg: 'linear-gradient(135deg,#0A1628,#1A3460)' },
+    { emoji: '🏕️', title: 'Leaders Camp Batch VI', desc: 'Pelatihan kepemimpinan 3 hari di Trawas', category: 'pelatihan', bg: 'linear-gradient(135deg,#1a3a2a,#2d6a4f)' },
+    { emoji: '📣', title: 'Youth Summit 2024', desc: 'Forum dialog pelajar & walikota Surabaya', category: 'event', bg: 'linear-gradient(135deg,#2c1654,#5a2d82)' },
+    { emoji: '🌿', title: 'Green School 2023', desc: 'Aksi tanam pohon di 20 sekolah', category: 'sosial', bg: 'linear-gradient(135deg,#1a3a2a,#4a7c59)' },
+    { emoji: '📚', title: 'HIMO Mengajar', desc: 'Bimbel gratis untuk pelajar kurang mampu', category: 'sosial', bg: 'linear-gradient(135deg,#2a1a0e,#7a4a2a)' },
+    { emoji: '🎨', title: 'Festival Seni Pelajar', desc: 'Pameran karya seni lintas sekolah', category: 'event', bg: 'linear-gradient(135deg,#1a0a28,#6a1a8a)' },
+    { emoji: '🤝', title: 'Forum Koordinasi April', desc: 'Rapat koordinasi rutin OSIS se-Surabaya', category: 'musyawarah', bg: 'linear-gradient(135deg,#0a1628,#2a3f6a)' },
+    { emoji: '💡', title: 'HIMO Innovate 2023', desc: 'Pameran inovasi teknologi pelajar', category: 'event', bg: 'linear-gradient(135deg,#1a1a0a,#4a4a1a)' },
+  ];
+
+  /* ============================================================
+     NAVBAR SCROLL
+  ============================================================ */
+  window.addEventListener('scroll', () => {
+    const nav = document.getElementById('navbar');
+    nav.classList.toggle('scrolled', window.scrollY > 60);
+  });
+
+  /* ============================================================
+     MOBILE MENU
+  ============================================================ */
+  document.getElementById('hamburgerBtn').addEventListener('click', () => {
+    document.getElementById('mobileMenu').classList.add('open');
+  });
+  function closeMobileMenu() {
+    document.getElementById('mobileMenu').classList.remove('open');
+  }
+
+  /* ============================================================
+     SCROLL REVEAL
+  ============================================================ */
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        setTimeout(() => entry.target.classList.add('visible'), i * 80);
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.12 });
+
+  function initReveal() {
+    document.querySelectorAll('.reveal, .reveal-left, .reveal-right').forEach(el => observer.observe(el));
+  }
+
+  /* ============================================================
+     TIMELINE
+  ============================================================ */
+  function toggleTimeline(el) {
+    document.querySelectorAll('.timeline-item').forEach(i => i.classList.remove('active'));
+    el.classList.add('active');
+  }
+
+  /* ============================================================
+     PROGRAM KERJA RENDER
+  ============================================================ */
+  function renderProgram() {
+    const grid = document.getElementById('programGrid');
+    grid.innerHTML = programData.map((p, i) => `
+      <div class="program-card reveal" style="transition-delay:${i * 0.08}s;">
+        <div class="program-icon">${p.icon}</div>
+        <h3 class="program-card-title">${p.title}</h3>
+        <p class="program-card-desc">${p.desc}</p>
+        <span class="program-badge badge-${p.status}">
+          ${p.status === 'aktif' ? 'Aktif' : p.status === 'selesai' ? '✓ Selesai' : '⏳ Segera'}
+        </span>
+      </div>
+    `).join('');
+    initReveal();
+  }
+
+  /* ============================================================
+     DOKUMENTASI RENDER — gabungan Firestore + fallback static
+  ============================================================ */
+  // currentDokFilter: filter aktif
+  let currentDokFilter = 'semua';
+
+  // Dipanggil oleh Firestore listener saat ada update
+  function renderDokFirestore(items) {
+    renderDokFromItems(items, currentDokFilter);
+  }
+  window.renderDokFirestore = renderDokFirestore;
+
+  // Render dari array item (bisa Firestore atau static)
+  function renderDokFromItems(items, filter) {
+    const grid = document.getElementById('dokGrid');
+    const filtered = filter === 'semua' ? items : items.filter(d => d.category === filter);
+
+    if (filtered.length === 0) {
+      // Fallback ke data statis jika Firestore kosong
+      const staticFiltered = filter === 'semua' ? dokData : dokData.filter(d => d.category === filter);
+      if (staticFiltered.length > 0) {
+        renderStaticDok(staticFiltered); return;
+      }
+      grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:60px 20px;color:var(--text-muted);">
+        <div style="font-size:48px;margin-bottom:12px;">📷</div>
+        <p>Belum ada foto untuk kategori ini.</p></div>`;
+      return;
+    }
+
+    grid.innerHTML = filtered.map((d, i) => `
+      <div class="dok-item" data-category="${d.category}" onclick="openLightboxFirestore('${d.id}')">
+        <div class="dok-item-img" style="background:var(--navy-mid);">
+          <img src="${d.imgUrl}" alt="${d.title}"
+            style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0;" />
+        </div>
+        <div class="dok-overlay">
+          <div class="dok-overlay-text">
+            <div class="dok-overlay-title">${d.title}</div>
+            <p>${d.desc || ''}</p>
+          </div>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  // Fallback: render data statis (emoji-based)
+  function renderStaticDok(items) {
+    const grid = document.getElementById('dokGrid');
+    grid.innerHTML = items.map((d, i) => `
+      <div class="dok-item" data-category="${d.category}" onclick="openLightboxStatic(${i})">
+        <div class="dok-item-img" style="background:${d.bg};">
+          <span style="font-size:${i===0||i===6?'72px':'48px'};position:relative;z-index:1;">${d.emoji}</span>
+        </div>
+        <div class="dok-overlay">
+          <div class="dok-overlay-text">
+            <div class="dok-overlay-title">${d.title}</div>
+            <p>${d.desc}</p>
+          </div>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  // Render awal — pakai Firestore jika sudah ada, fallback ke static
+  function renderDok(filter = 'semua') {
+    currentDokFilter = filter;
+    const fsItems = window.dokFirestoreCache;
+    if (fsItems && fsItems.length > 0) {
+      renderDokFromItems(fsItems, filter);
+    } else {
+      const items = filter === 'semua' ? dokData : dokData.filter(d => d.category === filter);
+      renderStaticDok(items);
+    }
+  }
+
+  function filterDok(cat, btn) {
+    document.querySelectorAll('.dok-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderDok(cat);
+  }
+
+  /* Admin: render daftar foto di panel admin */
+  function renderAdminDokList(items) {
+    const grid = document.getElementById('adminDokGrid');
+    if (!grid) return;
+    if (!items || items.length === 0) {
+      grid.innerHTML = '<div class="admin-dok-placeholder">📷</div>';
+      return;
+    }
+    grid.innerHTML = items.map(d => `
+      <div class="admin-dok-thumb">
+        <img src="${d.imgUrl}" alt="${d.title}" />
+        <div class="admin-dok-thumb-overlay">
+          <div class="admin-dok-thumb-title">${d.title}</div>
+          <span style="font-size:10px;color:rgba(255,255,255,0.5);">${d.category}</span>
+          <button class="btn-delete-dok" onclick="window.deleteDokumentasi('${d.id}','${d.storagePath||''}')">🗑️ Hapus</button>
+        </div>
+      </div>
+    `).join('');
+  }
+  window.renderAdminDokList = renderAdminDokList;
+
+  /* Preview foto sebelum upload */
+  function previewDokFoto(input) {
+    const file = input.files[0];
+    if (!file) return;
+    const img = document.getElementById('dok-preview-img');
+    img.src = URL.createObjectURL(file);
+    img.style.display = 'block';
+  }
+  window.previewDokFoto = previewDokFoto;
+
+  /* Switch admin tab */
+  function switchAdminTab(tab, btn) {
+    document.querySelectorAll('.admin-tab').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.admin-tab-panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tab-' + tab).classList.add('active');
+  }
+
+  /* ============================================================
+     LIGHTBOX
+  ============================================================ */
+  // Lightbox untuk foto dari Firestore
+  function openLightboxFirestore(id) {
+    const items = window.dokFirestoreCache || [];
+    const d = items.find(x => x.id === id);
+    if (!d) return;
+    document.getElementById('lightboxVisual').innerHTML =
+      `<img src="${d.imgUrl}" alt="${d.title}" style="width:100%;height:100%;object-fit:contain;border-radius:var(--radius-lg);" />`;
+    document.getElementById('lightboxTitle').textContent = d.title;
+    document.getElementById('lightboxDesc').textContent = d.desc || d.category;
+    document.getElementById('lightbox').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  // Lightbox untuk foto statis (fallback)
+  function openLightboxStatic(i) {
+    const d = dokData[i];
+    document.getElementById('lightboxVisual').innerHTML = `<span style="font-size:100px;">${d.emoji}</span>`;
+    document.getElementById('lightboxTitle').textContent = d.title;
+    document.getElementById('lightboxDesc').textContent = d.desc;
+    document.getElementById('lightbox').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeLightbox(e) {
+    if (!e || e.target === document.getElementById('lightbox') || !e) {
+      document.getElementById('lightbox').classList.remove('open');
+      document.body.style.overflow = '';
+    }
+  }
+
+  /* ============================================================
+     ARTIKEL RENDER  (articles array dikirim dari Firestore listener)
+  ============================================================ */
+  function renderArtikel(articles) {
+    const grid = document.getElementById('artikelGrid');
+    if (!articles || articles.length === 0) {
+      grid.innerHTML = `
+        <div class="artikel-empty">
+          <div class="empty-icon">📄</div>
+          <p>Belum ada artikel yang diterbitkan.<br>Jadilah yang pertama berkontribusi!</p>
+        </div>`;
+      return;
+    }
+    grid.innerHTML = articles.map((a, i) => `
+      <div class="artikel-card reveal" style="transition-delay:${i * 0.1}s;" onclick="openArticleModal('${a.id}')">
+        <div class="artikel-thumb">
+          <div class="artikel-thumb-overlay"></div>
+          <span style="font-size:52px; position:relative; z-index:1;">${a.emoji}</span>
+          <span class="artikel-category">${a.category}</span>
+        </div>
+        <div class="artikel-body">
+          <div class="artikel-meta">
+            <span>✍️ ${a.author}</span>
+            <span>📅 ${a.date}</span>
+          </div>
+          <h3 class="artikel-title">${a.title}</h3>
+          <p class="artikel-excerpt">${a.excerpt}</p>
+          <a class="artikel-link">Baca Selengkapnya →</a>
+        </div>
+      </div>
+    `).join('');
+    initReveal();
+  }
+  // Expose renderArtikel agar dipanggil dari Firebase module
+  // (sudah di atas, window.renderArtikel = renderArtikel)
+  // Firebase module juga set window.articleCache setiap kali listener update
+
+  function openArticleModal(id) {
+    // Ambil dari cache yang diisi Firestore listener
+    const a = (window.articleCache || []).find(x => x.id === id);
+    if (!a) return;
+    document.getElementById('articleModalHero').innerHTML = `
+      <div style="position:absolute;inset:0;background:linear-gradient(135deg,var(--navy),var(--navy-light));border-radius:var(--radius-lg) var(--radius-lg) 0 0;"></div>
+      <span style="font-size:80px; position:relative; z-index:1;">${a.emoji}</span>
+    `;
+    document.getElementById('articleModalCat').textContent = a.category;
+    document.getElementById('articleModalTitle').textContent = a.title;
+    document.getElementById('articleModalMeta').innerHTML = `
+      <span>✍️ ${a.author}</span>
+      <span>🏫 ${a.sekolah}</span>
+      <span>📅 ${a.date}</span>
+    `;
+    document.getElementById('articleModalText').innerHTML = a.content;
+    document.getElementById('articleModal').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeArticleModal() {
+    document.getElementById('articleModal').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  /* ============================================================
+     SUBMIT ARTICLE  (delegate ke Firebase module)
+  ============================================================ */
+  function openSubmitModal() {
+    document.getElementById('submitModal').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeSubmitModal() {
+    document.getElementById('submitModal').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+  // submitArtikel() didefinisikan di Firebase module, diekspos via window.submitArtikel
+
+  /* ============================================================
+     ADMIN PANEL
+  ============================================================ */
+  const ADMIN_PASS = 'himo2025';
+
+  function openAdminPanel() {
+    document.getElementById('adminPanel').classList.add('open');
+    document.getElementById('adminLoginSection').style.display = 'block';
+    document.getElementById('adminDashboard').style.display = 'none';
+    document.getElementById('adminPass').value = '';
+    document.getElementById('adminErr').textContent = '';
+    document.body.style.overflow = 'hidden';
+  }
+  function closeAdminPanel() {
+    document.getElementById('adminPanel').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+  function checkAdmin() {
+    const pass = document.getElementById('adminPass').value;
+    if (pass === ADMIN_PASS) {
+      document.getElementById('adminLoginSection').style.display = 'none';
+      document.getElementById('adminDashboard').style.display = 'block';
+      // Aktifkan Firestore listener untuk pending articles
+      if (window._startAdminListener) window._startAdminListener();
+      else renderPendingList([]);
+    } else {
+      document.getElementById('adminErr').textContent = '✕ Kode akses salah.';
+      document.getElementById('adminPass').value = '';
+    }
+  }
+
+  function renderPendingList(pending) {
+    const list = document.getElementById('pendingList');
+    if (!list) return;
+    if (!pending || pending.length === 0) {
+      list.innerHTML = `
+        <div class="admin-empty">
+          <div class="empty-icon">✅</div>
+          <p>Tidak ada artikel yang menunggu persetujuan.</p>
+        </div>`;
+      return;
+    }
+    list.innerHTML = pending.map(a => `
+      <div class="pending-item" id="pending-${a.id}">
+        <div class="pending-item-title">${a.title}</div>
+        <div class="pending-item-meta">✍️ ${a.author} &nbsp;·&nbsp; 🏫 ${a.sekolah} &nbsp;·&nbsp; 📁 ${a.category} &nbsp;·&nbsp; 📅 ${a.date}</div>
+        <div class="pending-item-preview">${a.excerpt}</div>
+        <div class="pending-actions">
+          <button class="btn-approve" onclick="window.approveArticle('${a.id}')">✅ Setujui &amp; Terbitkan</button>
+          <button class="btn-reject"  onclick="window.rejectArticle('${a.id}')">✕ Tolak</button>
+        </div>
+      </div>
+    `).join('');
+  }
+  // Expose agar bisa dipanggil dari Firestore listener
+  window.renderPendingList = renderPendingList;
+
+  /* ============================================================
+     TOAST
+  ============================================================ */
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 4000);
+  }
+  window.showToast = showToast;
+
+  /* ============================================================
+     CLOSE MODALS ON ESC
+  ============================================================ */
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      closeLightbox();
+      closeArticleModal();
+      closeSubmitModal();
+      closeAdminPanel();
+      closeMobileMenu();
+    }
+  });
+
+  /* ============================================================
+     INIT
+  ============================================================ */
+  document.addEventListener('DOMContentLoaded', () => {
+    renderProgram();
+    renderDok();
+    // renderArtikel dipanggil otomatis oleh Firestore onSnapshot
+    initReveal();
+  });
+</script>
+</body>
+</html>
